@@ -544,7 +544,7 @@ abstract class PHP_Depend_Parser implements PHP_Depend_ConstantsI
 
         $qualifiedName = $this->_createQualifiedTypeName($localName);
 
-        $class = $this->_builder->buildClass($qualifiedName);
+        $class = $this->_builder->buildClass($qualifiedName, $this->_namespaceName, $localName);
         $class->setSourceFile($this->_sourceFile);
         $class->setModifiers($this->_modifiers);
         $class->setDocComment($this->_docComment);

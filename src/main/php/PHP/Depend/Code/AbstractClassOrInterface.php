@@ -155,6 +155,13 @@ abstract class PHP_Depend_Code_AbstractClassOrInterface
      * @since 0.10.0
      */
     protected $packageName = null;
+    
+    /**
+     * Namespace
+     *
+     * @var string
+     */
+    protected $namespace = null;
 
     /**
      * Was this class or interface instance restored from the cache?
@@ -608,6 +615,40 @@ abstract class PHP_Depend_Code_AbstractClassOrInterface
     {
         $this->_package    = null;
         $this->packageName = null;
+    }
+
+    /**
+     * Sets the namespace of this class
+     *
+     * @param string $namespace
+     *
+     * @return PHP_Depend_Code_AbstractClassOrInterface
+     */
+    public function setNamespace($namespace)
+    {
+        $this->namespace = $namespace;
+
+        return $this;
+    }
+
+    /**
+     * Returns the namespace of this class
+     *
+     * @return string
+     */
+    public function getNamespace()
+    {
+        return $this->namespace;
+    }
+
+    /**
+     * Returns the qualified name of this class
+     *
+     * @return string
+     */
+    public function getQualifiedName()
+    {
+        return ltrim($this->getNamespace() . '\\' . $this->getName(), '\\');
     }
 
     /**

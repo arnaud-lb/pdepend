@@ -249,15 +249,22 @@ class PHP_Depend_Builder_Default implements PHP_Depend_BuilderI
      * </ol>
      *
      * @param string $name The class name.
+     * @param string $namespaceName The namespace name.
+     * @param string $shortName The class name without package name or namespace name.
      *
      * @return PHP_Depend_Code_Class The created class object.
      */
-    public function buildClass($name)
+    public function buildClass($name, $namespaceName = null, $shortName = null)
     {
         $this->checkBuilderState();
+
+        if ($shortName === null) {
+            $shortName = $this->extractTypeName($name);
+        }
         
-        $class = new PHP_Depend_Code_Class($this->extractTypeName($name));
-        $class->setCache($this->cache)
+        $class = new PHP_Depend_Code_Class($shortName);
+        $class->setNamespace($namespaceName)
+            ->setCache($this->cache)
             ->setContext($this->context)
             ->setSourceFile($this->defaultFile);
 
@@ -360,7 +367,8 @@ class PHP_Depend_Builder_Default implements PHP_Depend_BuilderI
         $this->checkBuilderState();
         
         $interface = new PHP_Depend_Code_Interface($this->extractTypeName($name));
-        $interface->setCache($this->cache)
+        $interface->setNamespace($this->extractNamespace($name))
+            ->setCache($this->cache)
             ->setContext($this->context)
             ->setSourceFile($this->defaultFile);
 
@@ -2002,6 +2010,28 @@ class PHP_Depend_Builder_Default implements PHP_Depend_BuilderI
     {
         if (($pos = strrpos($qualifiedName, '\\')) !== false) {
             return substr($qualifiedName, $pos + 1);
+        }
+        return $qualifiedName;
+    }
+
+    /**
+     * Extracts the namespace of a qualified PHP 5.3 type identifier
+     *
+     * <code>
+     *   $namespace = $this->extractTypeName('foo\bar\foobar');
+     *   var_dump($typeName);
+     *   // Results in:
+     *   // string(7) "foo\bar"
+     * </code>
+     *
+     * @param string $qualifiedName The qualified PHP 5.3 type identifier.
+     *
+     * @return string
+     */
+    protected function extractNamespace($qualifiedName)
+    {
+        if (($pos = strrpos($qualifiedName, '\\')) !== false) {
+            return substr($qualifiedName, 0, $pos);
         }
         return $qualifiedName;
     }
